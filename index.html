@@ -10,10 +10,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        /* พื้นหลังหลักของเว็บไซต์ทุกหน้า รวมทั้งหน้าแชท */
         body {
-            background-color: #fbf8f1;
-            background-image: radial-gradient(#f2e8d9 1px, transparent 0);
-            background-size: 20px 20px;
+            background-image: url('https://i.postimg.cc/Prg7CWYg/Screenshot-2026-10-23-161225.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             font-family: 'Mali', cursive;
             color: #5c4d43;
             overflow-x: hidden;
@@ -24,23 +26,23 @@
         .active-section { display: flex; animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .bg-element { position: absolute; font-size: 1.5rem; opacity: 0.3; animation: float 6s infinite ease-in-out; z-index: -1; }
+        .bg-element { position: absolute; font-size: 1.5rem; opacity: 0.5; animation: float 6s infinite ease-in-out; z-index: -1; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
         /* --- Section 1: ซองจดหมาย --- */
-        .envelope-container { cursor: pointer; transition: transform 0.3s; position: relative; margin-top: 80px; } 
+        .envelope-container { cursor: pointer; transition: transform 0.3s; position: relative; margin-top: 140px; } 
         .envelope-container:hover { transform: scale(1.05); }
         .envelope { width: 280px; height: 200px; background-color: #c49a6c; position: relative; border-radius: 0 0 10px 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); display: flex; justify-content: center; }
         .envelope::before { content: ''; position: absolute; bottom: 0; left: 0; border-left: 140px solid #d4a373; border-right: 140px solid #d4a373; border-bottom: 110px solid #cd9862; border-top: 90px solid transparent; z-index: 3; border-radius: 0 0 10px 10px; }
         .flap { position: absolute; top: 0; left: 0; border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 120px solid #b88655; transform-origin: top; transition: transform 0.6s ease; z-index: 4; }
         .letter-pull { position: absolute; bottom: 10px; width: 240px; height: 160px; background: #fff; z-index: 2; transition: transform 0.8s ease; display: flex; align-items: center; justify-content: center; flex-direction: column; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .envelope-container.open .flap { transform: rotateX(180deg); z-index: 1; }
-        .envelope-container.open .letter-pull { transform: translateY(-60px); z-index: 5; }
+        .envelope-container.open .letter-pull { transform: translateY(-45px); z-index: 5; }
 
         /* --- Section 2: รหัสผ่าน --- */
-        .pass-box { width: 50px; height: 60px; font-size: 2rem; text-align: center; border: 2px dashed #d4a373; background: #fff9f2; border-radius: 8px; color: #d4a373; font-family: 'Itim', cursive; box-shadow: 2px 2px 0px #eaddcf; outline: none; }
+        .pass-box { width: 50px; height: 60px; font-size: 2rem; text-align: center; border: 2px dashed #d4a373; background: rgba(255, 249, 242, 0.9); border-radius: 8px; color: #d4a373; font-family: 'Itim', cursive; box-shadow: 2px 2px 0px #eaddcf; outline: none; }
         .pass-box:focus { border-color: #ff9eb5; color: #ff9eb5; }
-        .scrapbook-title { background: #ffdeeb; padding: 10px 20px; transform: rotate(-2deg); font-weight: bold; font-size: 1.5rem; color: #d65a7f; border-radius: 5px; border: 2px dashed #ffb3c6; }
+        .scrapbook-title { background: rgba(255, 222, 235, 0.9); padding: 10px 20px; transform: rotate(-2deg); font-weight: bold; font-size: 1.5rem; color: #d65a7f; border-radius: 5px; border: 2px dashed #ffb3c6; }
 
         /* --- Section 3: แชท --- */
         .bubble { 
@@ -68,17 +70,6 @@
         #chat-container::-webkit-scrollbar-thumb { background-color: rgba(255, 179, 198, 0.5); border-radius: 4px; }
 
         /* --- Section 4: Timeline --- */
-        .timeline-bg { 
-            width: 100vw; 
-            height: 100vh; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            z-index: -1; 
-            background-image: url('https://i.postimg.cc/d3sM0V9G/pngtree-clouds-and-flowers-in-pink-landscape-image-2945381.jpg'); 
-            background-size: cover; 
-            background-position: center; 
-        }
         .timeline { position: relative; width: 100%; max-width: 400px; margin: 0 auto; padding: 20px 0 40px 0; }
         .timeline::after { content: ''; position: absolute; width: 4px; background-color: #ffb3c6; top: 0; bottom: 0; left: 24px; border-radius: 2px; }
         
@@ -90,20 +81,38 @@
             display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
-        .timeline-content { background-color: white; padding: 12px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; }
+        .timeline-content { background-color: rgba(255, 255, 255, 0.95); padding: 12px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; }
         
-        .stack-container { position: relative; width: 100%; height: 260px; cursor: pointer; border-radius: 5px; transition: transform 0.2s; background-color: #f7f3ed; }
+        /* Scrapbook Washi Tape Style for Stack Container */
+        .stack-container { 
+            position: relative; width: 100%; height: 260px; cursor: pointer; border-radius: 4px; 
+            transition: transform 0.2s; background-color: #fff; padding: 10px 10px 30px 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #f0e6dc;
+        }
+        .stack-container::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            width: 100px;
+            height: 24px;
+            background-color: rgba(255, 182, 193, 0.65);
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.5) 10px, rgba(255,255,255,0.5) 20px);
+            z-index: 30;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
         .stack-container:active { transform: scale(0.97); }
         .stack-container img { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            object-fit: cover; border-radius: 5px; border: 3px solid #fff; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+            position: absolute; top: 10px; left: 10px; width: calc(100% - 20px); height: calc(100% - 40px); 
+            object-fit: cover; border-radius: 2px; border: 2px solid #fff; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15); 
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            color: transparent; /* ซ่อนข้อความ alt ตอนรูปโหลดไม่ขึ้น */
         }
         .stack-hint { 
-            position: absolute; bottom: 10px; right: 10px; background: rgba(255,255,255,0.95); 
-            padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; color: #d65a7f; font-weight: bold;
+            position: absolute; bottom: 8px; right: 12px; background: rgba(255,255,255,0.95); 
+            padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; color: #d65a7f; font-weight: bold;
             z-index: 20; pointer-events: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
         }
 
@@ -132,11 +141,39 @@
             content: ''; position: absolute; top: 2%; right: -4px; bottom: 2%; width: 4px;
             background: #e8ded3; border-radius: 0 4px 4px 0; z-index: -1;
         }
+
+        /* --- Section 6: Music QR Code --- */
+        .music-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            padding: 30px 20px;
+            text-align: center;
+            max-width: 380px;
+            width: 100%;
+            border: 2px dashed #ffb3c6;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        /* Floating Hearts Animation */
+        .floating-heart {
+            position: fixed;
+            font-size: 1.2rem;
+            animation: floatUp 6s linear infinite;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2) rotate(360deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ของตกแต่งพื้นหลังหน้าซองจดหมาย -->
+    <!-- ของตกแต่งพื้นหลัง -->
     <div class="bg-element text-pink-300" style="top: 10%; left: 10%;">✨</div>
     <div class="bg-element text-red-300" style="top: 20%; right: 15%; animation-delay: 1s;">❤️</div>
     <div class="bg-element text-yellow-400" style="top: 50%; left: 20%; animation-delay: 2s;">⭐</div>
@@ -145,11 +182,11 @@
 
     <!-- ================= SECTION 1: ENVELOPE ================= -->
     <div id="sec-1" class="section active-section">
-        <div class="text-center mb-10">
-            <div class="inline-block bg-white px-6 py-2 rounded-full border-2 border-dashed border-pink-300 text-pink-500 font-bold shadow-sm rotate-1">
+        <div class="text-center mb-16">
+            <div class="inline-block bg-white/90 px-6 py-2 rounded-full border-2 border-dashed border-pink-300 text-pink-500 font-bold shadow-sm rotate-1">
                 WEBSITE
             </div>
-            <h1 class="text-3xl font-bold text-gray-700 mt-4">Surprise my love 💌</h1>
+            <h1 class="text-3xl font-bold text-gray-800 mt-4 drop-shadow-sm">Surprise my love 💌</h1>
         </div>
 
         <div class="envelope-container" id="env-wrapper" onclick="openEnvelope()">
@@ -162,7 +199,7 @@
             </div>
         </div>
         
-        <p class="mt-16 text-sm text-gray-500 animate-pulse bg-white/50 px-4 py-1 rounded-full">กดที่ซองจดหมายเพื่อเปิด</p>
+        <p class="mt-20 text-sm text-gray-700 font-bold animate-pulse bg-white/80 px-4 py-1 rounded-full shadow-sm">กดที่ซองจดหมายเพื่อเปิด</p>
     </div>
 
     <!-- ================= SECTION 2: PASSCODE ================= -->
@@ -171,7 +208,7 @@
             <i class="fa-solid fa-lock"></i> UNLOCK 🗝️
         </div>
         
-        <p class="text-gray-600 mb-6 text-center">ใส่รหัสผ่านเพื่อไปต่อนะ<br><span class="text-sm text-gray-400">(ใบ้: วันเกิดคนโปรด 4 หลัก เช่น 1402)</span></p>
+        <p class="text-gray-700 font-bold mb-6 text-center bg-white/70 px-4 py-2 rounded-lg">ใส่รหัสผ่านเพื่อไปต่อนะ<br><span class="text-sm font-normal text-gray-600">(ใบ้: วันเกิดคนโปรด 4 หลัก เช่น 1402)</span></p>
 
         <div class="flex gap-3 mb-10" id="pass-inputs">
             <input type="text" maxlength="1" class="pass-box" inputmode="numeric">
@@ -180,13 +217,13 @@
             <input type="text" maxlength="1" class="pass-box" inputmode="numeric">
         </div>
 
-        <p id="pass-error" class="text-red-400 text-sm hidden mb-4">รหัสผิดอ่า ลองใหม่น้าา 🥺</p>
+        <p id="pass-error" class="text-red-500 font-bold bg-white/90 px-3 py-1 rounded text-sm hidden mb-4 shadow-sm">รหัสผิดอ่า ลองใหม่น้าา 🥺</p>
     </div>
 
     <!-- ================= SECTION 3: CHAT ================= -->
     <div id="sec-3" class="section" style="padding: 10px; align-items: center; justify-content: center;">
         
-        <p class="text-gray-500 text-sm mb-4 animate-bounce">💬 มีข้อความเข้า...</p>
+        <p class="text-gray-700 font-bold bg-white/80 px-4 py-1 rounded-full text-sm mb-4 animate-bounce shadow-sm">💬 มีข้อความเข้า...</p>
 
         <div class="w-full max-w-[380px] relative flex flex-col bg-white" 
              style="height: 80vh; max-height: 750px; background-image: url('https://i.postimg.cc/tT7C4DC9/IMG-5343.jpg'); background-size: cover; background-position: center; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.2); overflow: hidden;">
@@ -215,12 +252,10 @@
     <!-- ================= SECTION 4: TIMELINE ================= -->
     <div id="sec-4" class="section" style="justify-content: flex-start; padding-top: 40px; padding-bottom: 40px; min-height: 100vh;">
         
-        <div class="timeline-bg"></div>
-        
-        <div class="inline-block bg-white/90 px-6 py-2 rounded-full border border-pink-200 text-pink-400 shadow-sm mb-6 text-lg font-bold text-center w-max mx-auto mt-4">
+        <div class="inline-block bg-white/90 px-6 py-2 rounded-full border border-pink-200 text-pink-500 shadow-sm mb-6 text-lg font-bold text-center w-max mx-auto mt-4">
             Our Journey 👩‍❤️‍👨
         </div>
-        <p class="text-center text-gray-700 font-bold bg-white/60 px-4 py-1 rounded-full text-sm mb-6">เลื่อนลงดูสิ 👇</p>
+        <p class="text-center text-gray-800 font-bold bg-white/80 px-4 py-1 rounded-full text-sm mb-6 shadow-sm">เลื่อนลงดูสิ 👇</p>
 
         <div class="timeline">
             
@@ -229,10 +264,10 @@
                 <div class="timeline-content">
                     <div class="stack-container" onclick="openLightbox('g1')">
                         <img src="https://i.postimg.cc/V68CVxYk/7AE37975-EC6E-4E10-84B2-F5C85A74A916.jpg" alt="First photo 1">
-                        <img src="https://i.postimg.cc/1thjY3nB/CB3D83E7-340C-4090-90CD-351E0FECA25E.jpg" alt="First photo 2">
+                        <img src="https://i.postimg.cc/qvpZ0b4Y/CB3D83E7-340C-4090-90CD-351E0FECA25E.jpg" alt="First photo 2">
                         <div class="stack-hint"><i class="fa-solid fa-magnifying-glass"></i> กดเพื่อดูรูปขยาย</div>
                     </div>
-                    <p class="text-center text-pink-500 font-bold text-lg mt-4">รูปคู่รูปแรก 💖</p>
+                    <p class="text-center text-pink-600 font-bold text-lg mt-4">รูปคู่รูปแรก 💖</p>
                 </div>
             </div>
 
@@ -244,7 +279,7 @@
                         <img src="https://i.postimg.cc/vTDHqh6n/4D1FBE6D-4A3B-4CD9-93B0-089ACE4DBAEF.jpg" alt="Movie 2">
                         <div class="stack-hint"><i class="fa-solid fa-magnifying-glass"></i> กดเพื่อดูรูปขยาย</div>
                     </div>
-                    <p class="text-center text-pink-500 font-bold text-lg mt-4">หนังเรื่องแรก 🎬</p>
+                    <p class="text-center text-pink-600 font-bold text-lg mt-4">หนังเรื่องแรก 🎬</p>
                 </div>
             </div>
 
@@ -252,14 +287,14 @@
             <div class="timeline-item">
                 <div class="timeline-content">
                     <div class="stack-container" onclick="openLightbox('g3')">
-                        <img src="https://i.postimg.cc/Prx2ywVH/CB91D2B2-9882-4E10-9E1E-75F570510967.jpg" alt="Couple 1">
-                        <img src="https://i.postimg.cc/qR4G3h6F/276A523D-F160-4CF4-A7CF-7D7CB1985699.jpg" alt="Couple 2">
+                        <img src="https://i.postimg.cc/vH2G6VTv/CB91D2B2-9882-4E10-9E1E-75F570510967.jpg" alt="Couple 1">
+                        <img src="https://i.postimg.cc/Dy8tHYyk/276A523D-F160-4CF4-A7CF-7D7CB1985699.jpg" alt="Couple 2">
                         <img src="https://i.postimg.cc/Pf6MCqXc/55A42FC6-034C-4FD4-B7CB-478DF5BA07D5.jpg" alt="Couple 3">
-                        <img src="https://i.postimg.cc/d3SRp5H6/705D18AF-21B5-4365-9DA0-742A72AF8818.jpg" alt="Couple 4">
+                        <img src="https://i.postimg.cc/FRHPc77G/705D18AF-21B5-4365-9DA0-742A72AF8818.jpg" alt="Couple 4">
                         <img src="https://i.postimg.cc/YqZfxymQ/06A71B38-7EBB-4CB9-B54B-05BD739CDE69.jpg" alt="Couple 5">
                         <div class="stack-hint"><i class="fa-solid fa-magnifying-glass"></i> กดเพื่อดูรูปขยาย</div>
                     </div>
-                    <p class="text-center text-pink-500 font-bold text-lg mt-4">รูปคู่ของเรา 🥰</p>
+                    <p class="text-center text-pink-600 font-bold text-lg mt-4">รูปคู่ของเรา 🥰</p>
                 </div>
             </div>
 
@@ -273,7 +308,7 @@
                         <img src="https://i.postimg.cc/1tdfZbSg/143D2287-6B2B-4BC0-AC22-BECFF8F1D11E.jpg" alt="Trip 4">
                         <div class="stack-hint"><i class="fa-solid fa-magnifying-glass"></i> กดเพื่อดูรูปขยาย</div>
                     </div>
-                    <p class="text-center text-pink-500 font-bold text-lg mt-4">ทริปความทรงจำดีๆ ✈️</p>
+                    <p class="text-center text-pink-600 font-bold text-lg mt-4">ทริปความทรงจำดีๆ ✈️</p>
                 </div>
             </div>
 
@@ -288,7 +323,6 @@
 
     <!-- ================= SECTION 5: THE BOOK (หนังสือเรื่องสั้น) ================= -->
     <div id="sec-5" class="section" style="justify-content: flex-start; padding-top: 40px; padding-bottom: 40px; min-height: 100vh;">
-        <div class="timeline-bg"></div> 
         
         <div class="book-container w-full max-w-md p-6 md:p-10 mt-6" id="the-book">
             <h2 class="text-2xl font-bold text-pink-500 mb-6 text-center" style="font-family: 'Chonburi', serif;">แด่คนโปรดของเค้า 📖</h2>
@@ -376,15 +410,33 @@
 
             </div>
 
-            <div class="mt-12 text-right">
-                <p class="text-pink-400 font-bold text-lg">รักนะบิบี๋ ❤️</p>
-                <p class="text-gray-500 text-sm mt-1">- จากเค้าเอง -</p>
+            <div class="mt-12 text-center">
+                <button onclick="goToSec(6)" class="bg-pink-400 hover:bg-pink-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105 animate-bounce">
+                    🎵 มีเพลงให้เธอด้วยนะ กดดูเลย!
+                </button>
             </div>
         </div>
 
         <button onclick="goToSec(4)" class="mt-10 text-white bg-black/30 px-6 py-2 rounded-full font-bold hover:bg-pink-500 flex items-center gap-2 transition-colors z-10 shadow-md">
             <i class="fa-solid fa-arrow-left"></i> ย้อนกลับไปดูรูป
         </button>
+    </div>
+
+    <!-- ================= SECTION 6: MUSIC QR CODE ================= -->
+    <div id="sec-6" class="section">
+        <div class="music-card">
+            <h2 class="text-2xl font-bold text-pink-500 mb-2" style="font-family: 'Chonburi', serif;">เพลงนี้ให้เธอนะ 🎧</h2>
+            
+            <div class="bg-white p-4 rounded-xl shadow-inner inline-block border-2 border-pink-200 mb-6 mt-4">
+                <img src="https://s.imgz.io/2026/10/23/b5f6df1f8799a22eb74c25963059e7296333854b45216f8a.png" alt="Music QR Code" class="w-48 h-48 object-contain mx-auto rounded-lg">
+            </div>
+
+            <p class="text-xs text-gray-400 mb-6">สุขสันต์วันเกิดนะคนโปรดของเค้า ✨</p>
+
+            <button onclick="goToSec(5)" class="text-pink-500 hover:text-pink-600 font-bold flex items-center justify-center gap-2 mx-auto transition-colors">
+                <i class="fa-solid fa-arrow-left"></i> กลับไปอ่านหนังสืออีกรอบ
+            </button>
+        </div>
     </div>
 
     <!-- ================= LIGHTBOX POPUP ================= -->
@@ -654,6 +706,25 @@
             document.getElementById('lightbox-img').src = currentGroup[currentIndex];
             document.getElementById('lightbox-counter').innerText = (currentIndex + 1) + " / " + currentGroup.length;
         }
+    </script>
+
+    <!-- Floating Hearts Generator Script -->
+    <script>
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            const symbols = ['💖', '✨', '🌸', '❤️', '⭐', '💌'];
+            heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+            heart.className = 'floating-heart';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 4 + 4) + 's';
+            heart.style.fontSize = (Math.random() * 1 + 1) + 'rem';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 8000);
+        }
+        setInterval(createFloatingHeart, 600);
     </script>
 </body>
 </html>
