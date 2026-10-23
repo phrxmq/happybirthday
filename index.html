@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise My Love</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Itim&family=Mali:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #fbf8f1;
+            background-image: radial-gradient(#f2e8d9 1px, transparent 0);
+            background-size: 20px 20px;
+            font-family: 'Mali', cursive;
+            color: #5c4d43;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        .section { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 20px; width: 100%; max-width: 500px; margin: 0 auto; position: relative; }
+        .active-section { display: flex; animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .bg-element { position: absolute; font-size: 1.5rem; opacity: 0.3; animation: float 6s infinite ease-in-out; z-index: -1; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        /* --- Section 1: ซองจดหมาย --- */
+        .envelope-container { cursor: pointer; transition: transform 0.3s; position: relative; margin-top: 80px; } 
+        .envelope-container:hover { transform: scale(1.05); }
+        .envelope { width: 280px; height: 200px; background-color: #c49a6c; position: relative; border-radius: 0 0 10px 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); display: flex; justify-content: center; }
+        .envelope::before { content: ''; position: absolute; bottom: 0; left: 0; border-left: 140px solid #d4a373; border-right: 140px solid #d4a373; border-bottom: 110px solid #cd9862; border-top: 90px solid transparent; z-index: 3; border-radius: 0 0 10px 10px; }
+        .flap { position: absolute; top: 0; left: 0; border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 120px solid #b88655; transform-origin: top; transition: transform 0.6s ease; z-index: 4; }
+        .letter-pull { position: absolute; bottom: 10px; width: 240px; height: 160px; background: #fff; z-index: 2; transition: transform 0.8s ease; display: flex; align-items: center; justify-content: center; flex-direction: column; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .envelope-container.open .flap { transform: rotateX(180deg); z-index: 1; }
+        .envelope-container.open .letter-pull { transform: translateY(-60px); z-index: 5; }
+
+        /* --- Section 2: รหัสผ่าน --- */
+        .pass-box { width: 50px; height: 60px; font-size: 2rem; text-align: center; border: 2px dashed #d4a373; background: #fff9f2; border-radius: 8px; color: #d4a373; font-family: 'Itim', cursive; box-shadow: 2px 2px 0px #eaddcf; outline: none; }
+        .pass-box:focus { border-color: #ff9eb5; color: #ff9eb5; }
+        .scrapbook-title { background: #ffdeeb; padding: 10px 20px; transform: rotate(-2deg); font-weight: bold; font-size: 1.5rem; color: #d65a7f; border-radius: 5px; border: 2px dashed #ffb3c6; }
+
+        /* --- Section 3: แชท --- */
+        .bubble { 
+            max-width: 85%; 
+            padding: 10px 16px; 
+            border-radius: 20px; 
+            font-size: 1.05rem; 
+            opacity: 0; 
+            transform: translateY(20px); 
+            transition: all 0.4s ease; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            width: fit-content; 
+            white-space: pre-wrap; 
+            word-wrap: break-word;
+            z-index: 10;
+            position: relative;
+        }
+        .bubble.show { opacity: 1; transform: translateY(0); }
+        .bubble.left { background-color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #ffe4e1; }
+        .bubble.right { background-color: #ffb3c6; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-btn { background: #fff; border: 2px solid #ffb3c6; color: #d65a7f; padding: 10px 20px; border-radius: 30px; cursor: pointer; transition: 0.2s; font-family: 'Mali', cursive; width: 100%; font-size: 1.05rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .chat-btn:hover { background: #ffb3c6; color: #fff; }
+
+        #chat-container::-webkit-scrollbar { width: 4px; }
+        #chat-container::-webkit-scrollbar-thumb { background-color: rgba(255, 179, 198, 0.5); border-radius: 4px; }
+
+        /* --- Section 4: Timeline --- */
+        .timeline-bg { 
+            width: 100vw; 
+            height: 100vh; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            z-index: -1; 
+            background-image: url('https://i.postimg.cc/d3sM0V9G/pngtree-clouds-and-flowers-in-pink-landscape-image-2945381.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+        }
+        .timeline { position: relative; width: 100%; max-width: 400px; margin: 0 auto; padding: 20px 0 40px 0; }
+        .timeline::after { content: ''; position: absolute; width: 4px; background-color: #ffb3c6; top: 0; bottom: 0; left: 24px; border-radius: 2px; }
+        
+        .timeline-item { padding: 10px 10px 40px 60px; position: relative; opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+        .timeline-item.show { opacity: 1; transform: translateY(0); }
+        .timeline-item::after { 
+            content: '💖'; position: absolute; width: 32px; height: 32px; left: 10px; top: 15px; 
+            background-color: #fff; border: 3px solid #ffb3c6; border-radius: 50%; z-index: 1; 
+            display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-content { background-color: white; padding: 12px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; }
+        
+        .stack-container { position: relative; width: 100%; height: 260px; cursor: pointer; border-radius: 5px; transition: transform 0.2s; background-color: #f7f3ed; }
+        .stack-container:active { transform: scale(0.97); }
+        .stack-container img { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; border-radius: 5px; border: 3px solid #fff; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
+            color: transparent; /* ซ่อนข้อความ alt ตอนรูปโหลดไม่ขึ้น */
+        }
+        .stack-hint { 
+            position: absolute; bottom: 10px; right: 10px; background: rgba(255,255,255,0.95); 
+            padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; color: #d65a7f; font-weight: bold;
+            z-index: 20; pointer-events: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
+        }
+
+        /* --- Lightbox Popup --- */
+        #lightbox { transition: opacity 0.3s ease; }
+        .lb-img { max-height: 75vh; max-width: 90vw; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 4px solid #fff; cursor: pointer; }
+        .lb-btn { background: rgba(255,255,255,0.2); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; transition: 0.2s; cursor: pointer; }
+        .lb-btn:hover { background: rgba(255,255,255,0.4); }
+
+        /* --- Section 5: The Book --- */
+        .book-container {
+            background-color: rgba(255, 253, 249, 0.95);
+            border-left: 12px solid #ff9eb5;
+            border-radius: 4px 15px 15px 4px;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.1), inset 5px 0 10px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 5;
+            opacity: 0; 
+            transform: translateY(30px); 
+            transition: all 1s ease;
+        }
+        .book-container.show {
+            opacity: 1; transform: translateY(0);
+        }
+        .book-container::after {
+            content: ''; position: absolute; top: 2%; right: -4px; bottom: 2%; width: 4px;
+            background: #e8ded3; border-radius: 0 4px 4px 0; z-index: -1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ของตกแต่งพื้นหลังหน้าซองจดหมาย -->
+    <div class="bg-element text-pink-300" style="top: 10%; left: 10%;">✨</div>
+    <div class="bg-element text-red-300" style="top: 20%; right: 15%; animation-delay: 1s;">❤️</div>
+    <div class="bg-element text-yellow-400" style="top: 50%; left: 20%; animation-delay: 2s;">⭐</div>
+    <div class="bg-element text-pink-400" style="top: 70%; right: 20%; animation-delay: 0.5s;">💖</div>
+    <div class="bg-element text-yellow-300" style="top: 85%; left: 30%; animation-delay: 1.5s;">✨</div>
+
+    <!-- ================= SECTION 1: ENVELOPE ================= -->
+    <div id="sec-1" class="section active-section">
+        <div class="text-center mb-10">
+            <div class="inline-block bg-white px-6 py-2 rounded-full border-2 border-dashed border-pink-300 text-pink-500 font-bold shadow-sm rotate-1">
+                WEBSITE
+            </div>
+            <h1 class="text-3xl font-bold text-gray-700 mt-4">Surprise my love 💌</h1>
+        </div>
+
+        <div class="envelope-container" id="env-wrapper" onclick="openEnvelope()">
+            <div class="envelope">
+                <div class="flap"></div>
+                <div class="letter-pull">
+                    <p class="font-bold text-gray-700 text-lg">เปิดเลยยยย!</p>
+                    <p class="text-xs text-gray-400 mt-2">มีอะไรจะบอก กดเปิดเลย 🥺</p>
+                </div>
+            </div>
+        </div>
+        
+        <p class="mt-16 text-sm text-gray-500 animate-pulse bg-white/50 px-4 py-1 rounded-full">กดที่ซองจดหมายเพื่อเปิด</p>
+    </div>
+
+    <!-- ================= SECTION 2: PASSCODE ================= -->
+    <div id="sec-2" class="section">
+        <div class="scrapbook-title mb-10 flex items-center gap-2">
+            <i class="fa-solid fa-lock"></i> UNLOCK 🗝️
+        </div>
+        
+        <p class="text-gray-600 mb-6 text-center">ใส่รหัสผ่านเพื่อไปต่อนะ<br><span class="text-sm text-gray-400">(ใบ้: วันเกิดคนโปรด 4 หลัก เช่น 1402)</span></p>
+
+        <div class="flex gap-3 mb-10" id="pass-inputs">
+            <input type="text" maxlength="1" class="pass-box" inputmode="numeric">
+            <input type="text" maxlength="1" class="pass-box" inputmode="numeric">
+            <input type="text" maxlength="1" class="pass-box" inputmode="numeric">
+            <input type="text" maxlength="1" class="pass-box" inputmode="numeric">
+        </div>
+
+        <p id="pass-error" class="text-red-400 text-sm hidden mb-4">รหัสผิดอ่า ลองใหม่น้าา 🥺</p>
+    </div>
+
+    <!-- ================= SECTION 3: CHAT ================= -->
+    <div id="sec-3" class="section" style="padding: 10px; align-items: center; justify-content: center;">
+        
+        <p class="text-gray-500 text-sm mb-4 animate-bounce">💬 มีข้อความเข้า...</p>
+
+        <div class="w-full max-w-[380px] relative flex flex-col bg-white" 
+             style="height: 80vh; max-height: 750px; background-image: url('https://i.postimg.cc/tT7C4DC9/IMG-5343.jpg'); background-size: cover; background-position: center; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.2); overflow: hidden;">
+            
+            <div class="absolute inset-0 bg-white/20 z-0"></div>
+
+            <div class="w-full flex-1 overflow-y-auto p-4 z-10 flex flex-col gap-2 pb-32" id="chat-container">
+                <div class="bubble left" id="c1">บิบี๋ 👀</div>
+                <div class="bubble left" id="c2">รู้มั้ยวันนี้วันอะไรเอ่ยยย?</div>
+            </div>
+
+            <div class="absolute bottom-0 left-0 w-full p-4 z-20 bg-gradient-to-t from-white/95 via-white/80 to-transparent pt-12">
+                <div id="chat-choices" class="w-full flex flex-col gap-3 opacity-0 transition-opacity duration-500 pointer-events-none">
+                    <button class="chat-btn" onclick="userReply1('วันเกิดเค้าไงงง 🎂')">วันเกิดเค้าไงงง 🎂</button>
+                    <button class="chat-btn" onclick="userReply1('วันอะไรน้าาา 🤔')">วันอะไรน้าาา 🤔</button>
+                </div>
+                
+                <div id="chat-choices-2" class="w-full hidden flex-col gap-3 opacity-0 transition-opacity duration-500">
+                    <button class="chat-btn" onclick="userReply2('พร้อมแล้ววว! ✨')">พร้อมแล้ววว! ✨</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= SECTION 4: TIMELINE ================= -->
+    <div id="sec-4" class="section" style="justify-content: flex-start; padding-top: 40px; padding-bottom: 40px; min-height: 100vh;">
+        
+        <div class="timeline-bg"></div>
+        
+        <div class="inline-block bg-white/90 px-6 py-2 rounded-full border border-pink-200 text-pink-400 shadow-sm mb-6 text-lg font-bold text-center w-max mx-auto mt-4">
+            Our Journey 👩‍❤️‍👨
+        </div>
+        <p class="text-center text-gray-700 font-bold bg-white/60 px-4 py-1 rounded-full text-sm mb-6">เลื่อนลงดูสิ 👇</p>
+
+        <div class="timeline">
+            
+            <!-- 1. รูปคู่รูปแรก -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="stack-container" onclick="openLightbox('g1')">
+                        <img src="https://i.postimg.cc/V68CVxYk/7AE37975-EC6E-4E10-84B2-F5C85A74A916.jpg" alt="First photo 1">
+                        <img src="https://i.postimg.cc/1thjY3nB/CB3D83E7-340C-4090-90CD-351E0FECA25E.jpg" alt="First photo 2">
+                        <div class="stack-hint"><i class="fa-solid fa-magnifying-glass"></i> กดเพื่อดูรูปขยาย</div>
+                    </div>
+                    <p class="text-center text-pink-500 font-bold text-lg mt-4">รูปคู่รูปแรก 💖</p>
+                </div>
+            </div>
+
+            <!-- 2. หนังเรื่องแรก -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="stack-container" onclick="openLightbox('g2')">
+                        <img src="https://i.postimg.cc/G3zyXg6m/B6F63831-0C64-4BDB-B71E-38C72118CA93.jpg" alt="Movie 1">
+                        <img src="https://i.postimg.cc/vTDHqh6n/4D1FBE6D-4A3B-4CD9-93B0-089ACE4DBAEF.jpg" alt="Movie 2">
+                        <div class="stack-hint"><i class="fa-solid fa-magnifying-glass"></i> กดเพื่อดูรูปขยาย</div>
+                    </div>
+                    <p class="text-center text-pink-500 font-bold text-lg mt-4">หนังเรื่องแรก 🎬</p>
+                </div>
+            </div>
+
+            <!-- 3. รูปคู่ทั้งหมด -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="stack-container" onclick="openLightbox('g3')">
+                        <img src="https://i.postimg.cc/Prx2ywVH/CB91D2B2-9882-4E10-9E1E-75F570510967.jpg" alt="Couple 1">
+                        <img src="https://i.postimg.cc/qR4G3h6F/276A523D-F160-4CF4-A7CF-7D7CB1985699.jpg" alt="Couple 2">
+                        <img src="https://i.postimg.cc/Pf6MCqXc/55A42FC6-034C-4FD4-B7CB-478DF5BA07D5.jpg" alt="Couple 3">
+                        <img src="https://i.postimg.cc/d3SRp5H6/705D18AF-21B5-4365-9DA0-742A72AF8818.jpg" alt="Couple 4">
+                        <img src="https://i.postimg.cc/YqZfxymQ/06A71B38-7EBB-4CB9-B54B-05BD739CDE69.jpg" alt="Couple 5">
+                        <div class="stack-hint"><i class="fa-solid fa-magnifying-glass"></i> กดเพื่อดูรูปขยาย</div>
+                    </div>
+                    <p class="text-center text-pink-500 font-bold text-lg mt-4">รูปคู่ของเรา 🥰</p>
+                </div>
+            </div>
+
+            <!-- 4. ทริปความทรงจำดีๆ -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="stack-container" onclick="openLightbox('g4')">
+                        <img src="https://i.postimg.cc/kX6WDFhr/D68AE532-60EB-402E-856E-DB10DBE1D2B8.jpg" alt="Trip 1">
+                        <img src="https://i.postimg.cc/vmQ17WX8/6F34F8D7-699F-4B20-B8F3-A96FCD492702.jpg" alt="Trip 2">
+                        <img src="https://i.postimg.cc/43ZcLC4p/AFA904C7-02E6-48A3-8254-F9A7538C807E.jpg" alt="Trip 3">
+                        <img src="https://i.postimg.cc/1tdfZbSg/143D2287-6B2B-4BC0-AC22-BECFF8F1D11E.jpg" alt="Trip 4">
+                        <div class="stack-hint"><i class="fa-solid fa-magnifying-glass"></i> กดเพื่อดูรูปขยาย</div>
+                    </div>
+                    <p class="text-center text-pink-500 font-bold text-lg mt-4">ทริปความทรงจำดีๆ ✈️</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="w-full flex justify-center mt-8 mb-10">
+            <button onclick="goToSec(5)" class="bg-pink-400 hover:bg-pink-500 text-white font-bold py-4 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105 animate-bounce z-10 relative">
+                📖 กดอ่านหนังสือที่เค้าตั้งใจแต่งให้เธอนะ
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= SECTION 5: THE BOOK (หนังสือเรื่องสั้น) ================= -->
+    <div id="sec-5" class="section" style="justify-content: flex-start; padding-top: 40px; padding-bottom: 40px; min-height: 100vh;">
+        <div class="timeline-bg"></div> 
+        
+        <div class="book-container w-full max-w-md p-6 md:p-10 mt-6" id="the-book">
+            <h2 class="text-2xl font-bold text-pink-500 mb-6 text-center" style="font-family: 'Chonburi', serif;">แด่คนโปรดของเค้า 📖</h2>
+            
+            <div class="book-content text-gray-700 leading-loose space-y-4 text-sm md:text-base">
+                
+                <h3 class="font-bold text-pink-500 text-base md:text-lg text-center mb-2">บทนำ: กระเป๋าเป้ใบเก่า กับความหมายใหม่ของการเดินทาง</h3>
+                <p>
+                หากชีวิตคือการเดินทางไกลที่ไม่อาจล่วงรู้จุดหมาย ฉันคงเป็นเพียงนักเดินทางที่คุ้นชินกับการเดินย่ำไปตามไหล่เขาเพียงลำพัง บนหลังของฉันมีกระเป๋าเป้ใบเก่าที่บรรจุเต็มไปด้วยความระแวดระวัง ความกลัวที่จะหลงทาง และความทรงจำจากบาดแผลในอดีตที่คอยถ่วงน้ำหนักให้ทุกก้าวเดินเต็มไปด้วยความเหนื่อยล้า ฉันเคยเชื่อเสมอว่าการเดินคนเดียวคือความปลอดภัยที่สุด เพราะหากต้องสะดุดยอดหญ้าหรือลื่นล้มลงในปลักโคลน ก็คงมีเพียงตัวฉันเองที่ต้องรับผิดชอบต่อความเจ็บปวดนั้น
+                </p>
+                <p>
+                จนกระทั่งวันหนึ่ง ท่ามกลางหมอกจางๆ ของฤดูกาลที่กำลังผลัดเปลี่ยน เส้นทางของฉันได้ทอดมาบรรจบกับเส้นทางของเธอ ผู้ชายที่หลงรักความสูงชันของภูเขา และมีดวงตาที่สงบนิ่งราวกับผืนป่ากว้าง วันที่เรายืนอยู่ตรงตีนเขาด้วยกัน เธอไม่ได้เอ่ยปากขอร้องให้ฉันทิ้งสัมภาระใดๆ ในกระเป๋า เธอเพียงแต่ยื่นมือมาช่วยปรับสายสะพายเป้ของฉันให้กระชับขึ้น รอยยิ้มบางๆ ของเธอพร้อมกับประโยคที่ว่า “ไม่ต้องกลัวหนักนะ ทางไหนที่มันชันเกินไป เดี๋ยวเราจะสลับกันแบกเอง” ได้ปลดเปลื้องความกังวลทั้งหมดที่ฉันเคยมี วินาทีนั้น ฉันรับรู้ได้ในทันทีว่า ภูเขาลูกนี้จะไม่เหมือนกับที่แห่งใดบนโลกที่ฉันเคยผ่านมา และการก้าวเดินไปพร้อมกับเธอ จะเป็นจุดเริ่มต้นของเรื่องราวที่สวยงามที่สุดในชีวิต
+                </p>
+
+                <h3 class="font-bold text-pink-500 text-base md:text-lg text-center mt-6 mb-2">บทที่ 1: แสงแดดรำไรใต้เงาไม้ และจังหวะก้าวที่สอดประสาน</h3>
+                <p>
+                ช่วงแรกของการออกเดินทาง ทุกอย่างงดงามและเรียบง่ายราวกับบทกวีที่ถูกเขียนขึ้นอย่างตั้งใจ เส้นทางทอดยาวลัดเลาะไปตามแนวป่าทึบ แสงแดดสีทองรำไรลอดผ่านเรือนยอดไม้ลงมาตกกระทบพื้นดินเป็นหย่อมๆ อากาศในยามเช้าเย็นเยียบและบริสุทธิ์เสียจนฉันอยากจะสูดลมหายใจเก็บไว้ให้ลึกที่สุด เสียงใบไม้แห้งกรอบแกรบที่ดังขึ้นใต้ฝ่าเท้าของเราสองคน สอดประสานเป็นจังหวะเดียวกันราวกับเสียงดนตรีที่เล่นคลอไปตลอดเส้นทาง
+                </p>
+                <p>
+                เราเดินเคียงข้างกัน ปล่อยให้ความเงียบสลับกับเสียงหัวเราะทำหน้าที่ร้อยเรียงความผูกพัน ฉันจำได้ดีถึงแผ่นหลังกว้างของเธอที่เดินนำหน้า คอยใช้กิ่งไม้แห้งปัดป่ายเถาวัลย์ที่ขวางทางออกให้ และคอยหันกลับมามองเป็นระยะเพื่อเมกชัวร์ว่าฉันยังคงเดินตามทัน เธอสอนให้ฉันชะลอฝีเท้าลง ชี้ให้ดูดอกหญ้าเล็กๆ ริมทางที่กำลังบานรับแสง และเฝ้ามองดูฝูงนกที่โผบินผ่านไป การมีเธออยู่ตรงนั้นทำให้ฉันตระหนักได้ว่า ความสุขของการเดินทางไม่ได้ถูกซ่อนไว้ที่ยอดเขาเพียงอย่างเดียว แต่มันร่วงหล่นและงอกงามอยู่ตามสองข้างทางที่เรากำลังก้าวผ่าน... และมันกำลังเดินเคียงข้างฉันอยู่ในตอนนี้
+                </p>
+
+                <h3 class="font-bold text-pink-500 text-base md:text-lg text-center mt-6 mb-2">บทที่ 2: หุบเขาแห่งความสับสน และทางแยกที่ไม่มีป้ายบอกทาง</h3>
+                <p>
+                เมื่อลัดเลาะลึกเข้าไปในผืนป่า เส้นทางที่เคยชัดเจนก็เริ่มเลือนราง หญ้ารกชัฏบดบังทางเดิน และเราก็เดินทางมาถึงทางแยกที่ไม่มีเข็มทิศหรือป้ายบอกทางใดๆ แผนที่ในมือกลายเป็นเพียงกระดาษเปล่าที่ไม่อาจให้คำตอบ มีบางช่วงเวลาที่เราเลือกตัดสินใจผิดพลาด เลี้ยวเข้าไปในเส้นทางที่ยากลำบากและเต็มไปด้วยหนามแหลม
+                </p>
+                <p>
+                ในโลกของความเป็นจริง ความสัมพันธ์ของเราก็เคยเดินทางมาถึงจุดนี้เช่นกัน จุดที่เรามีความเห็นไม่ตรงกัน สับสน และไม่แน่ใจว่าจะก้าวต่อไปทางไหนดี ความเงียบที่เคยเป็นความสบายใจกลับกลายเป็นความอึดอัดที่มองไม่เห็น แต่สิ่งที่ทำให้ฉันเรียนรู้ที่จะรักเธออย่างลึกซึ้ง คือความใจเย็นที่เธอมอบให้ในยามที่เราหลงทาง เธอไม่เคยพ่นลมหายใจด้วยความหงุดหงิด ไม่เคยกล่าวโทษว่าเป็นความผิดของใคร เธอเพียงแต่วางเป้ลง หยิบกระติกน้ำขึ้นมาดื่ม แล้วหันมายิ้มให้ฉันพร้อมกับพูดว่า “หลงก็ไม่เป็นไรหรอก ถือซะว่าได้เดินสำรวจป่าในมุมที่คนอื่นไม่มีโอกาสได้เห็น” ความสงบของเธอคือแผนที่ที่ดีที่สุด ที่นำทางเราให้กลับมาสู่เส้นทางหลักได้เสมอ
+                </p>
+
+                <h3 class="font-bold text-pink-500 text-base md:text-lg text-center mt-6 mb-2">บทที่ 3: ทางชัน เหงื่อที่หยดริน และสองมือที่ไม่มีวันปล่อย</h3>
+                <p>
+                ยิ่งเข้าใกล้ความสูงชัน ภูเขาลูกนี้ก็ยิ่งทดสอบความอดทนของเรา ก้อนหินใหญ่ระเกะระกะ ทางเดินชันชันจนต้องใช้มือช่วยปีนป่าย อากาศที่เคยเย็นสบายถูกแทนที่ด้วยความอบอ้าว หยาดเหงื่อไหลซึมจนแสบตา และแรงโน้มถ่วงก็คล้ายจะดึงรั้งเป้บนหลังให้หนักอึ้งขึ้นเป็นทวีคูณ ขาของฉันเริ่มก้าวไม่ออก และความเหนื่อยล้าก็เริ่มกัดกินหัวใจ
+                </p>
+                <p>
+                มันเหมือนกับช่วงเวลาที่เราต้องเผชิญกับคลื่นพายุในชีวิต ปัญหาที่ถาโถม ความเครียดจากการทำงาน หรือความเหนื่อยล้าจากโลกภายนอกที่ทำให้เราเผลอทำตัวไม่น่ารักใส่กัน มีบางจังหวะที่ฉันท้อแท้จนอยากจะทิ้งตัวลงนั่งและล้มเลิกทุกอย่าง แต่ทุกครั้งที่ฉันเงยหน้าขึ้น ฉันจะเห็นเธอยืนรออยู่ตรงก้อนหินที่มั่นคงกว่าเสมอ เธอไม่เคยเดินทิ้งห่างไปข้างหน้าเพียงลำพัง และไม่เคยปล่อยให้ฉันต้องเผชิญความเหนื่อยล้าอย่างโดดเดี่ยว เธอจะยื่นมือที่เปื้อนฝุ่นดินของเธอส่งมาให้ฉัน จับมือฉันไว้แน่นๆ ออกแรงดึงฉันขึ้นไป แล้วกระซิบข้างหูว่า “ค่อยๆ ก้าวทีละก้าวนะ เราอยู่ตรงนี้แล้ว” สัมผัสจากมือของเธอคือพลังที่ทำให้ฉันพร้อมจะปีนป่ายข้ามทุกอุปสรรค
+                </p>
+
+                <h3 class="font-bold text-pink-500 text-base md:text-lg text-center mt-6 mb-2">บทที่ 4: พายุหลงฤดู และร่มไม้ที่ชื่อว่าความปลอดภัย</h3>
+                <p>
+                และแล้วบททดสอบที่หนักหน่วงที่สุดก็มาเยือน ท้องฟ้าที่เคยสว่างไสวถูกปกคลุมด้วยเมฆทะมึน ลมกรรโชกแรงจนยอดไม้เอนลู่ และเพียงชั่วอึดใจ สายฝนที่เย็นเฉียบก็เทกระหน่ำลงมาอย่างไร้ความปรานี ทางดินที่เคยเดินง่ายกลายเป็นโคลนลื่นที่ทำให้เราล้มลุกคลุกคลาน เราทั้งคู่เปียกปอน เลอะเทอะ และหนาวสั่นไปถึงกระดูก
+                </p>
+                <p>
+                ในวินาทีที่ฉันรู้สึกอ่อนแอและหวาดกลัวที่สุด เธอคือคนที่รีบดึงฉันเข้าไปหลบใต้โขดหินใหญ่ ถอดเสื้อแจ็กเก็ตกันฝนของเธอออกมาคลุมไหล่ให้ฉัน และรวบตัวฉันเข้าไปกอดไว้แน่นเพื่อถ่ายทอดไออุ่น ต่อให้เสียงฟ้าร้องจะดังกึกก้องเพียงใด หรือลมพายุจะพัดแรงแค่ไหน แต่เมื่อฉันซุกใบหน้าลงกับอกของเธอ ฟังเสียงหัวใจที่เต้นเป็นจังหวะหนักแน่นและสม่ำเสมอ โลกทั้งใบก็พลันสงบลง เธอได้เปลี่ยนสถานที่ที่เหน็บหนาวและเปียกแฉะ ให้กลายเป็นหลุมหลบภัยที่อบอุ่นที่สุดเท่าที่มนุษย์คนหนึ่งจะจินตนาการได้
+                </p>
+
+                <h3 class="font-bold text-pink-500 text-base md:text-lg text-center mt-6 mb-2">บทที่ 5: ลานกางเต็นท์ กลิ่นกาแฟคั่วบด และค่ำคืนที่โลกหยุดหมุน</h3>
+                <p>
+                เมื่อพายุพัดผ่านไป ท้องฟ้าก็เปิดกว้างต้อนรับเราอีกครั้ง เราเดินทางมาถึงลานกางเต็นท์บนยอดเขาในยามที่ดวงอาทิตย์กำลังจะลาลับขอบฟ้า ท้องฟ้าเปลี่ยนเป็นสีวานิลลาอมส้ม อากาศกลับมาเย็นฉ่ำ และกลิ่นไอดินหลังฝนตกก็หอมกรุ่นชื่นใจ เราช่วยกันกางเต็นท์อย่างรู้จังหวะ ก่อกองไฟเล็กๆ เพื่อขับไล่ความหนาวเย็นที่หลงเหลืออยู่
+                </p>
+                <p>
+                เธอหยิบอุปกรณ์ดริปกาแฟชุดโปรดออกมาต้มน้ำร้อน เสียงน้ำเดือดปุดๆ สลับกับเสียงฟืนที่แตกปะทุในกองไฟ ผสมผสานกับกลิ่นหอมลึกซึ้งของเมล็ดกาแฟที่ลอยอวลอยู่ในอากาศ มันคือรางวัลที่ล้ำค่าที่สุดหลังจากการเดินทางที่แสนทุลักทุเล เราทิ้งตัวลงนั่งบนเก้าอี้แคมป์ปิ้งข้างๆ กัน ซุกกายอยู่ในผ้าห่มผืนเดียวกัน จิบกาแฟอุ่นๆ และทอดสายตามองดูเปลวไฟที่เต้นระบำ สลับกับหมู่ดาวนับล้านดวงที่พากันอวดแสงระยิบระยับอยู่เบื้องบน
+                </p>
+                <p>
+                เราไม่ได้เอื้อนเอ่ยถ้อยคำใดๆ ออกมามากมายนัก ทว่าความเงียบที่โรยตัวอยู่รอบกายกลับไม่เคยทำให้รู้สึกอึดอัด มันเป็นความเงียบที่เต็มไปด้วยความเข้าใจอย่างลึกซึ้ง เป็นความเงียบที่เปิดโอกาสให้เราได้ยินเสียงลมหายใจของกันและกันชัดเจนขึ้น สำหรับฉันแล้ว ความสุขสูงสุดไม่ใช่การได้ยืนประกาศชัยชนะบนยอดเขาที่สูงที่สุดในโลก แต่ความสุขคือการได้นั่งอยู่ตรงนี้ หน้าเต็นท์หลังเล็กๆ ของเรา โดยมีเธออยู่เคียงข้าง เธอคือ “บ้าน” ของฉัน ไม่ว่าเราจะไปกางเต็นท์อยู่ที่มุมใดของผืนป่า ขอเพียงมีเธอ พื้นที่ตรงนั้นก็คือบ้านที่อบอุ่นและปลอดภัยที่สุดเสมอ
+                </p>
+
+                <h3 class="font-bold text-pink-500 text-base md:text-lg text-center mt-6 mb-2">บทที่ 6: ทะเลหมอก แสงแรกแห่งรุ่งอรุณ และการเติบโต</h3>
+                <p>
+                เช้าตรู่วันนี้ อากาศหนาวจัดจนลมหายใจกลายเป็นไอขุ่นมัว เธอปลุกฉันตั้งแต่ฟ้ายังมืดมิดเพื่อให้ออกมายืนรอชมแสงแรกของวัน เรายืนจับมือกัน ซุกซ่อนมือที่เย็นเฉียบไว้ในกระเป๋าเสื้อกันหนาวของเธอเพื่อแบ่งปันความอบอุ่น
+                </p>
+                <p>
+                และเมื่อดวงอาทิตย์ค่อยๆ โผล่พ้นเหลี่ยมเขา แสงสีทองก็สาดส่องลงมากระทบกับทะเลหมอกสีขาวโพลนที่ลอยอ้อยอิ่งอยู่เบื้องล่าง มันหนานุ่มและกว้างใหญ่ไพศาลราวกับมหาสมุทรแห่งความฝัน ภาพความงามตรงหน้าสะกดให้เราสองคนหยุดนิ่ง มันคือของขวัญชิ้นใหญ่ที่สุดที่ธรรมชาติมอบให้กับความอดทนและความพยายามของเรา
+                </p>
+                <p>
+                แสงอาทิตย์ในเช้าวันนี้ ไม่ได้เป็นเพียงสัญญาณของการเริ่มต้นวันใหม่เท่านั้น แต่มันยังเป็นแสงสว่างที่สาดส่องเพื่อเฉลิมฉลองให้กับการเริ่มต้นขวบปีใหม่ในชีวิตของเธอด้วย... สุกสันต์วันเกิดนะ แฟนนักเดินทางที่เก่งกาจและอ่อนโยนที่สุดของฉัน
+                </p>
+
+                <h3 class="font-bold text-pink-500 text-base md:text-lg text-center mt-6 mb-2">บทส่งท้าย: ภูเขาลูกต่อไป และคำสัญญาจากเพื่อนร่วมทาง</h3>
+                <p>
+                เมื่อทอดสายตามองย้อนกลับไปตามเส้นทางที่เราได้ก้าวผ่านมา ทั้งรอยเท้าย่ำโคลน รอยยิ้ม เสียงหัวเราะ และคราบน้ำตา ทุกสิ่งล้วนสกัดกลั่นกลายเป็นความทรงจำที่งดงามและมีคุณค่าที่สุดในชีวิต ฉันภูมิใจในตัวเราเหลือเกิน ภูมิใจที่เราจับมือกันรอดพ้นจากทุกพายุ ภูมิใจที่เรายังคงโอบกอดกันแน่นแม้ในวันที่ทางลื่นชัน และที่สำคัญที่สุด... ฉันดีใจอย่างสุดซึ้ง ที่เมื่อหันมองข้างกายกี่ครั้ง คนคนนั้นก็ยังคงเป็นเธอ
+                </p>
+                <p>
+                ในขวบปีที่กำลังจะมาถึงนี้ และในการเดินทางครั้งต่อๆ ไปของชีวิต ฉันไม่อาจล่วงรู้ได้เลยว่า แผนที่แห่งอนาคตจะพาเราไปพบเจอกับภูเขาลูกใดอีก มันอาจจะมีทางชันที่ต้องใช้แรงกายมากกว่าเดิม อาจจะมีหมอกหนาทึบที่ทำให้เรามองไม่เห็นทาง หรืออาจจะมีพายุลูกใหญ่กว่าที่เคยเผชิญรอคอยเราอยู่
+                </p>
+                <p>
+                แต่มีสิ่งหนึ่งที่ฉันมั่นใจอย่างหมดหัวใจ... คือไม่ว่าเส้นทางข้างหน้าจะทอดยาวไปสู่ความยากลำบากเพียงใด ขอให้เธอรับรู้ไว้เสมอว่า เธอจะไม่มีวันต้องก้าวเดินอย่างโดดเดี่ยวลำพัง
+                </p>
+                <p>
+                ฉันจะยังคงแบกเป้ใบเดิม ผูกเชือกรองเท้าให้แน่นหนา พกพากาแฟดริปรสชาติที่เธอโปรดปราน และพร้อมที่จะก้าวเดินเคียงข้างเป็นเงาของเธอไปตลอดกาล ขอให้ขวบปีนี้ของเธอเป็นปีที่ท้องฟ้าเปิดกว้างและอากาศสดใส ขอให้เธอมีรอยยิ้มที่สว่างไสวเหมือนดวงอาทิตย์บนยอดเขา และขอให้ทุกความปวดร้าวหรือความเหนื่อยล้าของเธอ... ถูกเยียวยาด้วยความรักทั้งหมดที่ฉันมี
+                </p>
+                <p>
+                ขอบคุณที่เกิดมาบนโลกใบนี้ ขอบคุณที่เลือกเดินเข้ามาแบ่งปันเส้นทางชีวิตร่วมกับฉัน และขอบคุณ... ที่ทำให้การเดินทางที่แสนธรรมดาของคนคนหนึ่ง กลายเป็นเรื่องราวที่ยิ่งใหญ่ โรแมนติก และสวยงามที่สุดชั่วนิรันดร์
+                </p>
+
+            </div>
+
+            <div class="mt-12 text-right">
+                <p class="text-pink-400 font-bold text-lg">รักนะบิบี๋ ❤️</p>
+                <p class="text-gray-500 text-sm mt-1">- จากเค้าเอง -</p>
+            </div>
+        </div>
+
+        <button onclick="goToSec(4)" class="mt-10 text-white bg-black/30 px-6 py-2 rounded-full font-bold hover:bg-pink-500 flex items-center gap-2 transition-colors z-10 shadow-md">
+            <i class="fa-solid fa-arrow-left"></i> ย้อนกลับไปดูรูป
+        </button>
+    </div>
+
+    <!-- ================= LIGHTBOX POPUP ================= -->
+    <div id="lightbox" class="fixed inset-0 bg-black/95 z-[100] flex-col items-center justify-center hidden opacity-0" onclick="closeLightboxOverlay(event)">
+        <button class="absolute top-6 right-6 md:top-10 md:right-10 text-white hover:text-pink-300 text-4xl z-50" onclick="forceCloseLightbox()">
+            <i class="fa-solid fa-xmark pointer-events-none"></i>
+        </button>
+        
+        <div class="relative flex items-center justify-center w-full max-w-3xl px-4 mt-8">
+            <button class="absolute left-2 md:-left-12 lb-btn text-2xl z-20" onclick="prevLb(event)"><i class="fa-solid fa-chevron-left pointer-events-none"></i></button>
+            
+            <img id="lightbox-img" src="" class="lb-img z-10" onclick="nextLb(event)">
+            
+            <button class="absolute right-2 md:-right-12 lb-btn text-2xl z-20" onclick="nextLb(event)"><i class="fa-solid fa-chevron-right pointer-events-none"></i></button>
+        </div>
+
+        <p class="text-white mt-6 font-bold tracking-widest text-lg font-sans" id="lightbox-counter">1 / 1</p>
+        <p class="text-gray-400 text-sm mt-2 font-sans">แตะที่รูปเพื่อดูรูปถัดไป</p>
+    </div>
+
+    <!-- Scripts ควบคุมการทำงานทั้งหมด -->
+    <script>
+        function goToSec(num) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+            document.getElementById('sec-' + num).classList.add('active-section');
+            window.scrollTo(0,0);
+            
+            if(num === 3) startChat();
+            if(num === 4) {
+                setupTimelineObserver();
+                initStacks();
+            }
+            if(num === 5) {
+                setTimeout(() => {
+                    document.getElementById('the-book').classList.add('show');
+                }, 100);
+            }
+        }
+
+        function openEnvelope() {
+            document.getElementById('env-wrapper').classList.add('open');
+            setTimeout(() => { goToSec(2); }, 1500);
+        }
+
+        const inputs = document.querySelectorAll('.pass-box');
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', function() {
+                if(this.value.length === 1 && index < 3) inputs[index + 1].focus();
+                checkPass();
+            });
+            input.addEventListener('keydown', function(e) {
+                if(e.key === 'Backspace' && this.value === '' && index > 0) inputs[index - 1].focus();
+            });
+        });
+
+        function checkPass() {
+            let pass = Array.from(inputs).map(i => i.value).join('');
+            if(pass.length === 4) {
+                if(pass === "1402" || pass === "2410" || pass === "0104") {
+                    setTimeout(() => goToSec(3), 500);
+                } else {
+                    document.getElementById('pass-error').classList.remove('hidden');
+                    inputs.forEach(i => i.value = '');
+                    inputs[0].focus();
+                }
+            }
+        }
+
+        function scrollToBottomChat() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+        }
+
+        function startChat() {
+            setTimeout(() => { document.getElementById('c1').classList.add('show'); scrollToBottomChat(); }, 800);
+            setTimeout(() => { document.getElementById('c2').classList.add('show'); scrollToBottomChat(); }, 2000);
+            setTimeout(() => {
+                const choices = document.getElementById('chat-choices');
+                choices.classList.remove('opacity-0');
+                choices.classList.remove('pointer-events-none');
+                scrollToBottomChat();
+            }, 3000);
+        }
+
+        function userReply1(text) {
+            document.getElementById('chat-choices').style.display = 'none';
+            const chatBox = document.getElementById('chat-container');
+            
+            const uBubble = document.createElement('div');
+            uBubble.className = 'bubble right show';
+            uBubble.innerText = text;
+            chatBox.appendChild(uBubble);
+            scrollToBottomChat();
+
+            let delayOffset = 0;
+            if (text === 'วันอะไรน้าาา 🤔') {
+                setTimeout(() => {
+                    const b0 = document.createElement('div');
+                    b0.className = 'bubble left show';
+                    b0.innerText = 'วันเกิดบิบี๋ไง 🎂';
+                    chatBox.appendChild(b0);
+                    scrollToBottomChat();
+                }, 1000);
+                delayOffset = 1500; 
+            }
+
+            setTimeout(() => {
+                const b1 = document.createElement('div');
+                b1.className = 'bubble left show';
+                b1.innerText = 'แฮปปี้เบิร์ธเดย์นะบิบี๋ 💖';
+                chatBox.appendChild(b1);
+                scrollToBottomChat();
+            }, 1000 + delayOffset);
+
+            setTimeout(() => {
+                const b2 = document.createElement('div');
+                b2.className = 'bubble left show';
+                b2.innerText = 'สุขสันต์วันเกิดนะบิบี๋ 🎂\n\nขอให้วันนี้เป็นวันที่ดีของเธอ ขอให้ปีนี้ใจดีและ มีรอยยิ้มที่เค้าหลงรักอยู่คู่กับเธอในทุกๆ วันเลย ให้อวยพรทุกอย่างที่คิดไว้ก็คงพิมพ์ไม่หมด อวยพรเยอะเดี๋ยวดูแก่555 เค้าเห็นเธอชอบอ่านหนังสือ เค้าเลยตั้งใจเขียนทุกความรู้สึกเขียนเป็นเรื่องสั้นๆบทนึงขึ้น มาให้คนโปรดของเค้าโดยเฉพาะเลยย ลองอ่านดูนะะ';
+                chatBox.appendChild(b2);
+                scrollToBottomChat();
+            }, 2500 + delayOffset);
+
+            setTimeout(() => {
+                const b3 = document.createElement('div');
+                b3.className = 'bubble left show';
+                b3.innerText = 'เค้ามีอะไรให้ดูอีกนิดหน่อย พร้อมไปต่อรึยังง?';
+                chatBox.appendChild(b3);
+                scrollToBottomChat();
+                
+                const choices2 = document.getElementById('chat-choices-2');
+                choices2.classList.remove('hidden');
+                setTimeout(() => {
+                    choices2.classList.remove('opacity-0');
+                    scrollToBottomChat();
+                }, 100);
+            }, 6000 + delayOffset); 
+        }
+
+        function userReply2(text) {
+            document.getElementById('chat-choices-2').style.display = 'none';
+            const chatBox = document.getElementById('chat-container');
+            
+            const uBubble = document.createElement('div');
+            uBubble.className = 'bubble right show';
+            uBubble.innerText = text;
+            chatBox.appendChild(uBubble);
+            scrollToBottomChat();
+
+            setTimeout(() => {
+                const b4 = document.createElement('div');
+                b4.className = 'bubble left show';
+                b4.innerText = 'ลุยยยยยยย!';
+                chatBox.appendChild(b4);
+                scrollToBottomChat();
+            }, 1000);
+
+            setTimeout(() => { goToSec(4); }, 2500);
+        }
+
+        function setupTimelineObserver() {
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.timeline-item, .letter-paper').forEach(item => {
+                observer.observe(item);
+            });
+        }
+
+        function initStacks() {
+            document.querySelectorAll('.stack-container').forEach(container => {
+                const imgs = Array.from(container.querySelectorAll('img'));
+                imgs.forEach((img, i) => {
+                    if(i === 0) {
+                        img.style.transform = 'rotate(0deg) translate(0px, 0px) scale(1)';
+                        img.style.zIndex = '10';
+                    } else if (i === 1) {
+                        img.style.transform = 'rotate(4deg) translate(8px, 8px) scale(0.96)';
+                        img.style.zIndex = '9';
+                    } else if (i === 2) {
+                        img.style.transform = 'rotate(-3deg) translate(-6px, 12px) scale(0.92)';
+                        img.style.zIndex = '8';
+                    } else {
+                        img.style.opacity = '0';
+                        img.style.zIndex = '1';
+                    }
+                });
+            });
+        }
+
+        const photoGalleries = {
+            'g1': [
+                "https://i.postimg.cc/V68CVxYk/7AE37975-EC6E-4E10-84B2-F5C85A74A916.jpg",
+                "https://i.postimg.cc/qvpZ0b4Y/CB3D83E7-340C-4090-90CD-351E0FECA25E.jpg"
+            ],
+            'g2': [
+                "https://i.postimg.cc/G3zyXg6m/B6F63831-0C64-4BDB-B71E-38C72118CA93.jpg",
+                "https://i.postimg.cc/vTDHqh6n/4D1FBE6D-4A3B-4CD9-93B0-089ACE4DBAEF.jpg"
+            ],
+            'g3': [
+                "https://i.postimg.cc/vH2G6VTv/CB91D2B2-9882-4E10-9E1E-75F570510967.jpg",
+                "https://i.postimg.cc/Dy8tHYyk/276A523D-F160-4CF4-A7CF-7D7CB1985699.jpg",
+                "https://i.postimg.cc/Pf6MCqXc/55A42FC6-034C-4FD4-B7CB-478DF5BA07D5.jpg",
+                "https://i.postimg.cc/FRHPc77G/705D18AF-21B5-4365-9DA0-742A72AF8818.jpg",
+                "https://i.postimg.cc/YqZfxymQ/06A71B38-7EBB-4CB9-B54B-05BD739CDE69.jpg"
+            ],
+            'g4': [
+                "https://i.postimg.cc/kX6WDFhr/D68AE532-60EB-402E-856E-DB10DBE1D2B8.jpg",
+                "https://i.postimg.cc/vmQ17WX8/6F34F8D7-699F-4B20-B8F3-A96FCD492702.jpg",
+                "https://i.postimg.cc/43ZcLC4p/AFA904C7-02E6-48A3-8254-F9A7538C807E.jpg",
+                "https://i.postimg.cc/1tdfZbSg/143D2287-6B2B-4BC0-AC22-BECFF8F1D11E.jpg"
+            ]
+        };
+
+        let currentGroup = [];
+        let currentIndex = 0;
+
+        function openLightbox(groupId) {
+            currentGroup = photoGalleries[groupId];
+            currentIndex = 0;
+            updateLbView();
+            
+            const lb = document.getElementById('lightbox');
+            lb.classList.remove('hidden');
+            lb.classList.add('flex');
+            setTimeout(() => { lb.classList.remove('opacity-0'); }, 10);
+        }
+
+        function forceCloseLightbox() {
+            const lb = document.getElementById('lightbox');
+            lb.classList.add('opacity-0');
+            setTimeout(() => { 
+                lb.classList.add('hidden'); 
+                lb.classList.remove('flex');
+            }, 300);
+        }
+
+        function closeLightboxOverlay(e) {
+            if(e.target.id === 'lightbox') {
+                forceCloseLightbox();
+            }
+        }
+
+        function nextLb(e) {
+            if(e) e.stopPropagation();
+            if(currentGroup.length > 0) {
+                currentIndex = (currentIndex + 1) % currentGroup.length;
+                updateLbView();
+            }
+        }
+
+        function prevLb(e) {
+            if(e) e.stopPropagation();
+            if(currentGroup.length > 0) {
+                currentIndex = (currentIndex - 1 + currentGroup.length) % currentGroup.length;
+                updateLbView();
+            }
+        }
+
+        function updateLbView() {
+            document.getElementById('lightbox-img').src = currentGroup[currentIndex];
+            document.getElementById('lightbox-counter').innerText = (currentIndex + 1) + " / " + currentGroup.length;
+        }
+    </script>
+</body>
+</html>
